@@ -1,38 +1,40 @@
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 @import 'tailwindcss';
 
 /*
-  Sistema visual "terminal organico": densidad de panel de control con identidad
-  jade. Tema oscuro por defecto porque es una herramienta de jornada completa.
+  Identidad visual alineada a iguana-web: tema claro, acento verde, tipografia
+  Plus Jakarta Sans + JetBrains Mono para cifras/etiquetas. Los nombres de los
+  tokens (jade, surface-N, etc.) se mantienen igual que antes para no tocar
+  ningun componente: solo cambian los valores.
 */
 @theme {
-  --color-surface-0: #0a0f0d;
-  --color-surface-1: #111815;
-  --color-surface-2: #18211d;
-  --color-surface-3: #212c27;
-  --color-surface-4: #2c3a34;
+  --color-surface-0: #ffffff;
+  --color-surface-1: #f7f7f5;
+  --color-surface-2: #f3f3f1;
+  --color-surface-3: #e9e9e6;
+  --color-surface-4: #d8d9d5;
 
-  --color-line: #253029;
-  --color-line-strong: #33423a;
+  --color-line: rgba(18, 18, 18, 0.09);
+  --color-line-strong: rgba(18, 18, 18, 0.18);
 
-  --color-ink: #e8f0ec;
-  --color-ink-soft: #9aa8a1;
-  --color-ink-mute: #6b7a73;
+  --color-ink: #121212;
+  --color-ink-soft: #5b5f5c;
+  --color-ink-mute: #8a8f8c;
 
-  --color-jade: #2dd4a7;
-  --color-jade-deep: #17a37c;
-  --color-jade-glow: #6ef2ce;
+  --color-jade: #0c7a3e;
+  --color-jade-deep: #095f30;
+  --color-jade-glow: #3fae74;
 
-  --color-amber: #f5a524;
-  --color-coral: #ef6461;
-  --color-azure: #5b9dd9;
-  --color-violet: #9d7cd8;
+  --color-amber: #c17f0e;
+  --color-coral: #d94f4c;
+  --color-azure: #3d7ebd;
+  --color-violet: #7c5cc2;
 
-  --font-display: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
-  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', ui-sans-serif, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  --radius-card: 10px;
+  --radius-card: 20px;
 
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -43,7 +45,7 @@
   }
 
   html {
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   body {
