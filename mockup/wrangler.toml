@@ -1,0 +1,8 @@
+name = "crm-iguana-mockup"
+compatibility_date = "2025-01-01"
+
+# Mockup estatico, sin Worker script: solo sirve los archivos de este
+# directorio. Sin base de datos ni backend todavia.
+[assets]
+directory = "."
+not_found_handling = "single-page-application"
