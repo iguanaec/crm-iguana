@@ -79,6 +79,7 @@ export async function recalculatePriorities(
   const results = prioritizeTasks(tasks.map(toScorable), objectives);
   const previousById = new Map(tasks.map((t) => [t.id, t.aiPriorityScore]));
   const currentById = new Map(tasks.map((t) => [t.id, t.priority as ManualPriority]));
+  const titleById = new Map(tasks.map((t) => [t.id, t.title]));
 
   const calculatedAt = new Date();
 
@@ -104,6 +105,7 @@ export async function recalculatePriorities(
     return [
       {
         ...result,
+        taskTitle: titleById.get(result.taskId) ?? '',
         previousScore: previousById.get(result.taskId) ?? null,
         suggestedPriority,
         currentPriority,
@@ -205,10 +207,13 @@ export async function buildInsights(userId: string): Promise<DashboardInsights> 
   const weekEnd = new Date(today);
   weekEnd.setUTCDate(weekEnd.getUTCDate() + 7);
 
-  const [nextTask, bottlenecks, prioritization, openTasks, objectives] = await Promise.all([
+  // El recalculo va primero y solo: lo demas lee los puntajes que acaba de
+  // guardar. En paralelo leerian los valores anteriores (o null la primera vez).
+  const prioritization = await recalculatePriorities(userId);
+
+  const [nextTask, bottlenecks, openTasks, objectives] = await Promise.all([
     suggestNextTask(userId),
     findBottlenecks(userId),
-    recalculatePriorities(userId),
     prisma.task.findMany({
       where: { project: { userId, status: 'active' }, status: { not: 'done' } },
       include: taskInclude,

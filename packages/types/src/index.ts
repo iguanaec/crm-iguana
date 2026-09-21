@@ -177,6 +177,8 @@ export interface PriorityResult {
 }
 
 export interface PriorityChange extends PriorityResult {
+  /** Sin el título, la sugerencia no dice de qué tarea habla. */
+  taskTitle: string;
   previousScore: number | null;
   suggestedPriority: ManualPriority;
   currentPriority: ManualPriority;

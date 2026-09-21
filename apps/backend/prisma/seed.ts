@@ -21,7 +21,7 @@ async function main(): Promise<void> {
   const user = await prisma.user.create({
     data: {
       email: DEMO_EMAIL,
-      name: 'Equipo Iguana',
+      name: 'Camila Ortiz',
       passwordHash: await bcrypt.hash(DEMO_PASSWORD, 10),
       timezone: 'America/Bogota',
     },
@@ -77,7 +77,7 @@ async function main(): Promise<void> {
       clientId: nortec.id,
       name: 'Identidad Nortec',
       description: 'Manual de marca y sitio de presentación.',
-      color: '#9d7cd8',
+      color: '#d55181',
       startDate: inDays(-5),
       endDate: inDays(60),
       pipelines: {

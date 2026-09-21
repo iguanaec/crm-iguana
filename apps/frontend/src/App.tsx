@@ -1,17 +1,46 @@
 import { useEffect } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from './lib/auth.js';
 import { LoginPage } from './pages/LoginPage.js';
+import { DashboardPage } from './pages/DashboardPage.js';
+import { ProjectsPage } from './pages/ProjectsPage.js';
+import { ProjectBoardPage } from './pages/ProjectBoardPage.js';
+import { ClientsPage } from './pages/ClientsPage.js';
+import { ObjectivesPage } from './pages/ObjectivesPage.js';
+import { AppLayout } from './components/AppLayout.js';
+import { AssistantPanel } from './components/assistant/AssistantPanel.js';
+import { useAssistantPanel } from './components/assistant/assistantPanel.js';
 
 export function App() {
   const status = useAuth((s) => s.status);
-  const user = useAuth((s) => s.user);
   const restore = useAuth((s) => s.restore);
-  const logout = useAuth((s) => s.logout);
+  const openAssistant = useAssistantPanel((s) => s.open);
+  const { pathname } = useLocation();
 
   useEffect(() => {
     void restore();
   }, [restore]);
+
+  // "N" abre el creador de tareas, salvo mientras se escribe en un campo.
+  useEffect(() => {
+    if (status !== 'authenticated') return;
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'n' && event.key !== 'N') return;
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('input, textarea, select, [contenteditable="true"]')) return;
+
+      event.preventDefault();
+      // Estando en un tablero, la tarea nace en ese proyecto sin preguntarlo.
+      openAssistant(pathname.match(/^\/proyectos\/([0-9a-f-]{36})/)?.[1]);
+    };
+
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [status, openAssistant, pathname]);
 
   if (status === 'loading') {
     return (
@@ -24,33 +53,19 @@ export function App() {
   if (status === 'anonymous') return <LoginPage />;
 
   return (
-    <div className="min-h-screen bg-surface-0 px-6 py-10">
-      <div className="mx-auto max-w-5xl">
-        <header className="flex items-baseline justify-between border-b border-line pb-6">
-          <div>
-            <h1 className="font-display text-3xl text-ink">
-              Hola, {user?.name.split(' ')[0]}
-            </h1>
-            <p className="metric mt-1 text-xs uppercase tracking-wider text-ink-mute">
-              {user?.email}
-            </p>
-          </div>
-          <button
-            onClick={logout}
-            className="rounded-lg border border-line px-4 py-2 text-sm text-ink-soft transition-colors hover:border-line-strong hover:text-ink"
-          >
-            Salir
-          </button>
-        </header>
+    <>
+      <Routes>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/proyectos" element={<ProjectsPage />} />
+          <Route path="/proyectos/:projectId" element={<ProjectBoardPage />} />
+          <Route path="/clientes" element={<ClientsPage />} />
+          <Route path="/objetivos" element={<ObjectivesPage />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
 
-        <div className="panel-assistant reveal mt-8 p-6">
-          <p className="metric text-[0.7rem] uppercase tracking-[0.2em] text-jade">Asistente</p>
-          <p className="mt-3 text-ink-soft">
-            Sesión activa. El dashboard, los pipelines y la vista semanal se conectan en el
-            siguiente paso.
-          </p>
-        </div>
-      </div>
-    </div>
+      <AssistantPanel />
+    </>
   );
 }
