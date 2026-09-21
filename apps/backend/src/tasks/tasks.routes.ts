@@ -13,6 +13,21 @@ import {
 import { parseDateOnly, toHistoryEntry, toTask } from '../http/serialize.js';
 import { dateOnlySchema, idParam, prioritySchema, uuidSchema } from '../http/schemas.js';
 import { wouldCreateCycle } from './dependencies.js';
+import { recalculatePriorities } from '../ai/ai.service.js';
+
+/**
+ * Los puntajes de un proyecto dependen unos de otros: una tarea nueva cambia la
+ * cuenta de bloqueos y la carga del responsable. Recalcular el proyecto al
+ * escribir evita que el tablero muestre un guion donde debería ir un número.
+ */
+async function rescoreProject(userId: string, projectId: string): Promise<void> {
+  try {
+    await recalculatePriorities(userId, projectId);
+  } catch (error) {
+    // El dato ya se guardó; un fallo aquí solo deja el puntaje sin refrescar.
+    console.warn('No se pudo recalcular el proyecto:', error);
+  }
+}
 
 const taskInclude = {
   project: { select: { id: true, name: true, color: true } },
@@ -215,8 +230,15 @@ tasksRouter.post(
       include: taskInclude,
     });
 
+    await rescoreProject(userId, body.projectId);
+
+    const scored = await prisma.task.findUniqueOrThrow({
+      where: { id: task.id },
+      include: taskInclude,
+    });
+
     res.status(201).json({
-      task: { ...toTask(task), project: task.project, assignedTo: task.assignedTo },
+      task: { ...toTask(scored), project: scored.project, assignedTo: scored.assignedTo },
     });
   }),
 );
@@ -290,9 +312,15 @@ tasksRouter.patch(
       return [{ changedById: userId, changeType: describeChange(field), field, oldValue, newValue }];
     });
 
-    const task = await prisma.task.update({
+    await prisma.task.update({
       where: { id: before.id },
       data: { ...data, ...(history.length > 0 ? { history: { create: history } } : {}) },
+    });
+
+    await rescoreProject(userId, before.projectId);
+
+    const task = await prisma.task.findUniqueOrThrow({
+      where: { id: before.id },
       include: taskInclude,
     });
 
