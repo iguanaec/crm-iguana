@@ -1,0 +1,29 @@
+{
+  "name": "crm-iguana",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c blue,magenta \"npm run dev -w @crm/backend\" \"npm run dev -w @crm/frontend\"",
+    "build": "npm run build -w @crm/types && npm run build -w @crm/assistant && npm run build -w @crm/backend && npm run build -w @crm/frontend",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:migrate": "npm run db:migrate -w @crm/backend",
+    "db:seed": "npm run db:seed -w @crm/backend",
+    "db:studio": "npm run db:studio -w @crm/backend",
+    "setup": "npm install && npm run db:up && npm run db:migrate && npm run db:seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "playwright": "^1.63.0",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

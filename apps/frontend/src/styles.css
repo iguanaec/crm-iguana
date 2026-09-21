@@ -1,0 +1,179 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400..700&display=swap');
+@import 'tailwindcss';
+
+/*
+  Sistema visual "terminal organico": densidad de panel de control con identidad
+  jade. Tema oscuro por defecto porque es una herramienta de jornada completa.
+*/
+@theme {
+  --color-surface-0: #0a0f0d;
+  --color-surface-1: #111815;
+  --color-surface-2: #18211d;
+  --color-surface-3: #212c27;
+  --color-surface-4: #2c3a34;
+
+  --color-line: #253029;
+  --color-line-strong: #33423a;
+
+  --color-ink: #e8f0ec;
+  --color-ink-soft: #9aa8a1;
+  --color-ink-mute: #6b7a73;
+
+  --color-jade: #2dd4a7;
+  --color-jade-deep: #17a37c;
+  --color-jade-glow: #6ef2ce;
+
+  --color-amber: #f5a524;
+  --color-coral: #ef6461;
+  --color-azure: #5b9dd9;
+  --color-violet: #9d7cd8;
+
+  --font-display: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
+  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --radius-card: 10px;
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-surface-0);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv05' 1, 'ss03' 1;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Grano muy tenue: da textura al fondo sin competir con el contenido. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background-color: var(--color-jade-deep);
+    color: var(--color-surface-0);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-surface-4);
+    border: 3px solid var(--color-surface-0);
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-line-strong);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-jade);
+    outline-offset: 2px;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit;
+  }
+}
+
+@layer components {
+  /* Cifras del asistente: siempre en mono para que se lean como medicion. */
+  .metric {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+  }
+
+  .panel {
+    background-color: var(--color-surface-1);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+  }
+
+  /* Filo superior luminoso: marca los bloques que vienen del asistente. */
+  .panel-assistant {
+    position: relative;
+    background-color: var(--color-surface-1);
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+
+  .panel-assistant::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-jade), transparent);
+  }
+
+  .reveal {
+    animation: reveal 0.5s var(--ease-out-quint) both;
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
