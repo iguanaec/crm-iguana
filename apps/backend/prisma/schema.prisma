@@ -186,7 +186,9 @@ model Task {
   project    Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
   pipeline   Pipeline       @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
   assignedTo User?          @relation("TaskAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
-  createdBy  User           @relation("TaskCreator", fields: [createdById], references: [id])
+  // Sin cascada, una cuenta que creo tareas queda imposible de borrar: la
+  // restriccion la bloquea aunque el proyecto (y con el, la tarea) ya se vaya.
+  createdBy  User           @relation("TaskCreator", fields: [createdById], references: [id], onDelete: Cascade)
   parentTask Task?          @relation("Subtasks", fields: [parentTaskId], references: [id], onDelete: SetNull)
   subtasks   Task[]         @relation("Subtasks")
   objective  Objective?     @relation(fields: [objectiveId], references: [id], onDelete: SetNull)
