@@ -93,4 +93,41 @@ El score de cada tarea (0 a 10) combina cuatro factores:
 | Carga | 10% | Penaliza a quien ya acumula demasiadas tareas abiertas |
 
 La prioridad manual (1 a 5) es tuya y el asistente nunca la sobrescribe: cuando su
-score se aleja de lo que fijaste, lo sugiere y tú decides.
+score se aleja dos niveles o más de lo que fijaste, lo sugiere y tú decides. Una
+diferencia de un solo nivel no se reporta, porque avisar de matices enseña a
+ignorar los avisos.
+
+Nunca recomienda empezar algo que espera por otra tarea, aunque tenga el puntaje
+más alto.
+
+## Crear tareas escribiendo
+
+Pulsa `N` en cualquier pantalla y describe la tarea como la dirías en voz alta:
+
+```
+Llamar a Laura para revisar la propuesta el martes, urgente
+Preparar informe de cierre en 3 horas
+Lanzar sitio con: copy, diseño y pruebas
+```
+
+Reconoce fechas (`mañana`, `el viernes`, `en 3 días`, `fin de mes`, `15/10`),
+prioridad (`urgente`, `cuando puedas`), esfuerzo (`en 2 horas`) y listas de
+subtareas. Antes de guardar te muestra lo que entendió, para que lo corrijas si
+se equivocó. Todo con reglas locales: no sale una sola petición a internet.
+
+## Avisos
+
+| Cuándo | Qué llega |
+| --- | --- |
+| A la hora que elijas (9:00 por defecto) | Resumen del día: por dónde empezar, qué venció, qué es para hoy |
+| Dos días antes de un vencimiento | Un aviso por tarea, solo si importa por prioridad o puntaje |
+
+Máximo tres al día, para que sigan significando algo.
+
+Los avisos siempre quedan en la app. Si quieres recibirlos también en Discord o
+Slack, ve a **Ajustes**, pega la dirección de un webhook entrante y usa *Enviar
+prueba*. Solo se aceptan direcciones `https` de `discord.com` o
+`hooks.slack.com`: el servidor es quien hace la petición, y aceptar cualquier
+dirección lo convertiría en un puente hacia redes privadas.
+
+Para verlos sin esperar la hora programada, usa *Revisar ahora* en Ajustes.

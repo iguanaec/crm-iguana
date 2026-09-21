@@ -1,4 +1,10 @@
-import { prioritizeTasks, scoreToManualPriority, type ScorableTask } from '@crm/assistant';
+import {
+  days as daysWord,
+  prioritizeTasks,
+  scoreToManualPriority,
+  tasks as tasksWord,
+  type ScorableTask,
+} from '@crm/assistant';
 import type {
   Bottleneck,
   DashboardInsights,
@@ -153,12 +159,12 @@ export async function suggestNextTask(userId: string): Promise<NextTaskSuggestio
   const reasons: string[] = [];
   if (best!.dueDate) {
     const days = Math.round((best!.dueDate.getTime() - startOfToday().getTime()) / 86_400_000);
-    if (days < 0) reasons.push(`está vencida hace ${Math.abs(days)} día(s)`);
+    if (days < 0) reasons.push(`está vencida hace ${daysWord(Math.abs(days))}`);
     else if (days === 0) reasons.push('vence hoy');
     else if (days === 1) reasons.push('vence mañana');
-    else reasons.push(`vence en ${days} días`);
+    else reasons.push(`vence en ${daysWord(days)}`);
   }
-  if (blockedCount > 0) reasons.push(`desbloquea ${blockedCount} tarea(s)`);
+  if (blockedCount > 0) reasons.push(`desbloquea ${tasksWord(blockedCount)}`);
   if (best!.status === 'in_progress') reasons.push('ya está empezada');
 
   const reason =

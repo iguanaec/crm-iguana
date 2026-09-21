@@ -10,6 +10,9 @@ import { projectsRouter } from './projects/projects.routes.js';
 import { tasksRouter } from './tasks/tasks.routes.js';
 import { objectivesRouter } from './objectives/objectives.routes.js';
 import { aiRouter } from './ai/ai.routes.js';
+import { notificationsRouter } from './notifications/notifications.routes.js';
+import { integrationsRouter } from './integrations/integrations.routes.js';
+import { startScheduler } from './scheduler.js';
 
 const app = express();
 
@@ -30,6 +33,8 @@ api.use('/projects', projectsRouter);
 api.use('/tasks', tasksRouter);
 api.use('/objectives', objectivesRouter);
 api.use('/ai', aiRouter);
+api.use('/notifications', notificationsRouter);
+api.use('/integrations', integrationsRouter);
 
 app.use('/api/v1', api);
 
@@ -38,6 +43,7 @@ app.use(errorHandler);
 
 const server = app.listen(env.PORT, () => {
   console.log(`API escuchando en http://localhost:${env.PORT}/api/v1`);
+  startScheduler();
 });
 
 async function shutdown(signal: string): Promise<void> {

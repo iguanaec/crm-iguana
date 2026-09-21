@@ -2,6 +2,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type {
   Client,
   DashboardInsights,
+  IntegrationConfig,
+  IntegrationPlatform,
+  Notification,
+  NotificationType,
   ManualPriority,
   ObjectiveProgress,
   ParsedTaskDraft,
@@ -233,5 +237,117 @@ export function useCreateProject() {
       endDate?: string | null;
     }) => api.post<{ project: Project }>('/projects', input).then((r) => r.project),
     onSuccess: () => void client.invalidateQueries({ queryKey: keys.projects }),
+  });
+}
+
+export interface NotificationList {
+  items: Notification[];
+  unreadCount: number;
+}
+
+export function useNotifications() {
+  return useQuery({
+    queryKey: ['notifications'],
+    queryFn: () => api.get<NotificationList>('/notifications'),
+    // El aviso nace de un cron: sin recargar, la campana quedaría muda.
+    refetchInterval: 60_000,
+  });
+}
+
+export function useMarkRead() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.patch<unknown>(`/notifications/${id}/read`, {}),
+    onSuccess: () => void client.invalidateQueries({ queryKey: ['notifications'] }),
+  });
+}
+
+export function useMarkAllRead() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: () => api.post<{ updated: number }>('/notifications/read-all', {}),
+    onSuccess: () => void client.invalidateQueries({ queryKey: ['notifications'] }),
+  });
+}
+
+/** Corre las revisiones del asistente ahora, sin esperar la hora programada. */
+export function useRunChecks() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: () => api.post<{ digests: number; deadlines: number }>('/notifications/run-checks', {}),
+    onSuccess: () => void client.invalidateQueries({ queryKey: ['notifications'] }),
+  });
+}
+
+export function useIntegrations() {
+  return useQuery({
+    queryKey: ['integrations'],
+    queryFn: () => api.get<{ items: IntegrationConfig[] }>('/integrations').then((r) => r.items),
+  });
+}
+
+export function useSaveIntegration() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      platform,
+      webhookUrl,
+      notificationTypes,
+    }: {
+      platform: IntegrationPlatform;
+      webhookUrl: string;
+      notificationTypes?: NotificationType[];
+    }) =>
+      api.put<{ integration: IntegrationConfig }>(`/integrations/${platform}`, {
+        webhookUrl,
+        ...(notificationTypes ? { notificationTypes } : {}),
+      }),
+    onSuccess: () => void client.invalidateQueries({ queryKey: ['integrations'] }),
+  });
+}
+
+export function useTestIntegration() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (platform: IntegrationPlatform) =>
+      api.post<{ ok: boolean; error?: string }>(`/integrations/${platform}/test`),
+    onSuccess: () => void client.invalidateQueries({ queryKey: ['integrations'] }),
+  });
+}
+
+export function useRemoveIntegration() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (platform: IntegrationPlatform) => api.delete<void>(`/integrations/${platform}`),
+    onSuccess: () => void client.invalidateQueries({ queryKey: ['integrations'] }),
+  });
+}
+
+export function useUpdatePreferences() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (patch: {
+      digestHour?: number;
+      notifyDailyDigest?: boolean;
+      notifyDeadlines?: boolean;
+      notifyPriority?: boolean;
+    }) => api.patch<unknown>('/auth/me', patch),
+    onSuccess: () => void client.invalidateQueries({ queryKey: ['preferences'] }),
+  });
+}
+
+export function usePreferences() {
+  return useQuery({
+    queryKey: ['preferences'],
+    queryFn: () =>
+      api.get<{
+        user: { digestHour: number };
+        preferences: {
+          digestHour: number;
+          notifyDailyDigest: boolean;
+          notifyDeadlines: boolean;
+          notifyPriority: boolean;
+        };
+      }>('/auth/me'),
   });
 }

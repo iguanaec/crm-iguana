@@ -7,6 +7,7 @@ import { currentUserId } from '../auth/auth.service.js';
 import { assertClientAccess, assertPipelineAccess, assertProjectAccess } from '../http/ownership.js';
 import { parseDateOnly, toPipeline, toProject } from '../http/serialize.js';
 import { dateOnlySchema, hexColorSchema, idParam, uuidSchema } from '../http/schemas.js';
+import { tasks as tasksWord } from '@crm/assistant';
 
 /** Un proyecto nuevo nace usable: sin columnas no se puede crear una tarea. */
 const DEFAULT_PIPELINES = [
@@ -215,7 +216,7 @@ projectsRouter.delete(
     const taskCount = await prisma.task.count({ where: { pipelineId: pipeline.id } });
     if (taskCount > 0) {
       throw badRequest(
-        `El pipeline tiene ${taskCount} tarea(s). Muévelas antes de eliminarlo.`,
+        `El pipeline tiene ${tasksWord(taskCount)}. ${taskCount === 1 ? 'Muévela' : 'Muévelas'} antes de eliminarlo.`,
       );
     }
 

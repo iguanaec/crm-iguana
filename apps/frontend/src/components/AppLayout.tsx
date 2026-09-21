@@ -1,10 +1,21 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { CalendarDays, FolderKanban, LogOut, Sparkles, Target, Users } from 'lucide-react';
+import {
+  CalendarDays,
+  CalendarRange,
+  FolderKanban,
+  LogOut,
+  Settings,
+  Sparkles,
+  Target,
+  Users,
+} from 'lucide-react';
 import { useAuth } from '../lib/auth.js';
 import { useAssistantPanel } from './assistant/assistantPanel.js';
+import { NotificationBell } from './notifications/NotificationBell.js';
 
 const NAV = [
   { to: '/', label: 'Hoy', icon: CalendarDays },
+  { to: '/semana', label: 'La semana', icon: CalendarRange },
   { to: '/proyectos', label: 'Proyectos', icon: FolderKanban },
   { to: '/clientes', label: 'Clientes', icon: Users },
   { to: '/objetivos', label: 'Objetivos', icon: Target },
@@ -17,7 +28,9 @@ export function AppLayout() {
 
   return (
     <div className="flex min-h-screen bg-surface-0">
-      <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col border-r border-line bg-surface-1">
+      {/* z-20: al ser sticky crea su propio contexto de apilamiento, y sin esto
+          el contenido posicionado de la página se dibuja sobre sus desplegables. */}
+      <aside className="sticky top-0 z-20 flex h-screen w-60 shrink-0 flex-col border-r border-line bg-surface-1">
         <div className="flex items-center gap-2.5 px-5 py-6">
           <span
             aria-hidden
@@ -47,6 +60,20 @@ export function AppLayout() {
               {label}
             </NavLink>
           ))}
+
+          <NotificationBell />
+
+          <NavLink
+            to="/ajustes"
+            className={({ isActive }) =>
+              `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors duration-150 ${
+                isActive ? 'bg-surface-3 text-ink' : 'text-ink-soft hover:bg-surface-2 hover:text-ink'
+              }`
+            }
+          >
+            <Settings size={17} strokeWidth={1.75} />
+            Ajustes
+          </NavLink>
 
           <button
             onClick={() => openAssistant()}

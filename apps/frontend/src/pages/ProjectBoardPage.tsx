@@ -24,6 +24,7 @@ import {
   describeDueDate,
   formatScore,
   scoreTone,
+  tasksWord,
 } from '../lib/format.js';
 
 export function ProjectBoardPage() {
@@ -292,7 +293,7 @@ function Card({
           {blockedCount !== undefined && blockedCount > 0 && (
             <p className="metric mt-2 flex items-center gap-1 text-[0.65rem] text-amber">
               <GitBranch size={10} />
-              bloquea {blockedCount} tarea(s)
+              bloquea {tasksWord(blockedCount)}
             </p>
           )}
         </div>

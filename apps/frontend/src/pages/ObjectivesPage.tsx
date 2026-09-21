@@ -1,6 +1,6 @@
 import { Loader2, Target } from 'lucide-react';
 import { useObjectives } from '../lib/queries.js';
-import { describeDueDate, formatAmount } from '../lib/format.js';
+import { describeDueDate, formatAmount, plural } from '../lib/format.js';
 
 const GOAL_TYPE_LABEL: Record<string, string> = {
   revenue: 'Ingresos',
@@ -88,7 +88,7 @@ export function ObjectivesPage() {
                   {objective.linkedTaskCount > 0 && objective.goalType !== 'completion' && (
                     <>
                       <span>·</span>
-                      <span>{objective.linkedTaskCount} tarea(s) ligadas</span>
+                      <span>{plural(objective.linkedTaskCount, 'tarea ligada', 'tareas ligadas')}</span>
                     </>
                   )}
                 </div>

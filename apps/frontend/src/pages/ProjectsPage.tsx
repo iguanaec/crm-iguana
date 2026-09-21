@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Loader2, Plus, X } from 'lucide-react';
 import { useClients, useCreateProject, useProjects } from '../lib/queries.js';
-import { PROJECT_COLORS, describeDueDate } from '../lib/format.js';
+import { PROJECT_COLORS, describeDueDate, tasksWord } from '../lib/format.js';
 
 const PROJECT_STATUS_LABEL: Record<string, string> = {
   active: 'Activo',
@@ -80,7 +80,7 @@ export function ProjectsPage() {
                 )}
 
                 <div className="metric mt-4 flex items-center gap-3 border-t border-line pt-3 text-[0.7rem] text-ink-mute">
-                  <span>{project.taskCount} tarea(s)</span>
+                  <span>{tasksWord(project.taskCount)}</span>
                   <span>·</span>
                   <span>{PROJECT_STATUS_LABEL[project.status] ?? project.status}</span>
                   {project.endDate && (

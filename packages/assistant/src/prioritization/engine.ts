@@ -1,4 +1,5 @@
 import type { ManualPriority, PriorityFactors, PriorityResult } from '@crm/types';
+import { days as daysWord, tasks as tasksWord } from '../utils/plural.js';
 
 export const FACTOR_WEIGHTS = {
   urgency: 0.4,
@@ -95,14 +96,14 @@ function explain(task: ScorableTask, factors: PriorityFactors, context: TaskCont
 
   if (task.dueDate) {
     const days = daysUntil(task.dueDate, now);
-    if (days < 0) parts.push(`vencida hace ${Math.abs(days)} día(s)`);
+    if (days < 0) parts.push(`vencida hace ${daysWord(Math.abs(days))}`);
     else if (days === 0) parts.push('vence hoy');
     else if (days === 1) parts.push('vence mañana');
-    else if (days <= 7) parts.push(`vence en ${days} días`);
+    else if (days <= 7) parts.push(`vence en ${daysWord(days)}`);
   }
 
   if (context.blockedCount > 0) {
-    parts.push(`bloquea ${context.blockedCount} tarea(s)`);
+    parts.push(`bloquea ${tasksWord(context.blockedCount)}`);
   }
 
   if (context.objective) {

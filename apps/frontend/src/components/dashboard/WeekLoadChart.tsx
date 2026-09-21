@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { DashboardInsights } from '@crm/types';
-import { formatHours, parseCalendarDate } from '../../lib/format.js';
+import { formatHours, parseCalendarDate, tasksWord } from '../../lib/format.js';
 
 const DAY_INITIALS = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
 
@@ -20,7 +20,7 @@ export function WeekLoadChart({ data }: { data: DashboardInsights['weekLoad'] })
       <header className="mb-5 flex items-baseline justify-between">
         <h2 className="font-display text-base text-ink">Carga de los próximos 7 días</h2>
         <p className="metric text-xs text-ink-mute">
-          {totalTasks} tarea(s) · {formatHours(totalHours)}
+          {tasksWord(totalTasks)} · {formatHours(totalHours)}
         </p>
       </header>
 
@@ -43,7 +43,7 @@ export function WeekLoadChart({ data }: { data: DashboardInsights['weekLoad'] })
                   onMouseLeave={() => setHovered(null)}
                   onFocus={() => setHovered(index)}
                   onBlur={() => setHovered(null)}
-                  aria-label={`${day.date}: ${day.taskCount} tarea(s), ${formatHours(day.estimatedHours)}`}
+                  aria-label={`${day.date}: ${tasksWord(day.taskCount)}, ${formatHours(day.estimatedHours)}`}
                   className="group relative flex h-full flex-1 items-end"
                 >
                   <span
@@ -80,7 +80,7 @@ export function WeekLoadChart({ data }: { data: DashboardInsights['weekLoad'] })
               role="tooltip"
               className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full rounded-lg border border-line-strong bg-surface-3 px-3 py-2 text-xs whitespace-nowrap shadow-lg"
             >
-              <span className="text-ink">{data[hovered]!.taskCount} tarea(s)</span>
+              <span className="text-ink">{tasksWord(data[hovered]!.taskCount)}</span>
               <span className="metric ml-2 text-ink-soft">
                 {formatHours(data[hovered]!.estimatedHours)}
               </span>

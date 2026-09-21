@@ -114,6 +114,15 @@ export const PROJECT_COLORS = [
   '#e66767',
 ] as const;
 
+/** Concuerda el sustantivo con la cantidad: "1 tarea", no "1 tarea(s)". */
+export function plural(count: number, singular: string, many: string): string {
+  return `${count} ${count === 1 ? singular : many}`;
+}
+
+export function tasksWord(count: number): string {
+  return plural(count, 'tarea', 'tareas');
+}
+
 export const STATUS_LABEL: Record<string, string> = {
   todo: 'Por hacer',
   in_progress: 'En curso',

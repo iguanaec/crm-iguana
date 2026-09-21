@@ -153,7 +153,7 @@ describe('prioritizeTasks', () => {
     );
     const base = results.find((r) => r.taskId === 'base');
     expect(base?.factors.dependencies).toBeCloseTo(0.2);
-    expect(base?.reason).toBe('Bloquea 2 tarea(s).');
+    expect(base?.reason).toBe('Bloquea 2 tareas.');
   });
 
   it('no cuenta como bloqueadas las tareas ya terminadas', () => {
@@ -185,6 +185,6 @@ describe('prioritizeTasks', () => {
 
   it('explica el motivo en lenguaje natural', () => {
     const results = prioritizeTasks([task({ id: 'a', dueDate: date('2026-09-18') })], [], NOW);
-    expect(results[0]?.reason).toBe('Vencida hace 3 día(s).');
+    expect(results[0]?.reason).toBe('Vencida hace 3 días.');
   });
 });
