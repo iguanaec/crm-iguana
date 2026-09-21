@@ -62,14 +62,102 @@
     box-shadow: 0 0 60px rgba(18,18,18,0.06);
   }
 
-  @media (min-width: 520px) {
+  @media (min-width: 680px) {
     body { padding: 32px 16px; }
     .app {
+      max-width: 640px;
       min-height: calc(100vh - 64px);
       border-radius: 32px;
       border: 1px solid var(--line);
       overflow: hidden;
     }
+
+    .board-col { flex: 0 0 46%; }
+
+    .sheet-overlay {
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .sheet {
+      max-width: 420px;
+      border-radius: 24px;
+      transform: translateY(16px);
+      opacity: 0;
+      transition: transform .28s var(--ease, cubic-bezier(.22,1,.36,1)), opacity .28s ease;
+    }
+
+    .sheet-overlay.open .sheet { transform: translateY(0); opacity: 1; }
+  }
+
+  /* Desktop: barra lateral en vez de tabbar inferior, columnas mas anchas */
+  @media (min-width: 1024px) {
+    body { padding: 40px 24px; }
+
+    .app {
+      max-width: 1120px;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      grid-template-rows: auto 1fr;
+      grid-template-areas: "header header" "nav main";
+    }
+
+    header.topbar { grid-area: header; padding-left: 28px; padding-right: 28px; }
+
+    main {
+      grid-area: main;
+      padding: 28px 36px 40px;
+      overflow-y: visible;
+    }
+
+    nav.tabbar {
+      grid-area: nav;
+      position: static;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: 4px;
+      padding: 24px 14px;
+      border-top: none;
+      border-right: 1px solid var(--line);
+      background: var(--paper);
+      backdrop-filter: none;
+    }
+
+    .tab-btn {
+      flex-direction: row;
+      justify-content: flex-start;
+      gap: 11px;
+      padding: 11px 14px;
+      border-radius: 12px;
+      width: 100%;
+      font-size: 13px;
+    }
+
+    .tab-btn.active { background: var(--green-soft); }
+    .tab-btn svg { width: 20px; height: 20px; }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      overflow: visible;
+      margin: 0;
+      padding: 0;
+    }
+
+    .board-col { flex: none; }
+
+    .dash-columns {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .dash-columns .section-head:first-child { margin-top: 4px; }
+
+    .narrow { max-width: 480px; }
   }
 
   /* Header */
@@ -612,48 +700,54 @@
         </div>
       </div>
 
-      <div class="section-head">
-        <h3>Por dónde empezar</h3>
-        <a href="#">Ver todo</a>
-      </div>
-      <div class="panel">
-        <div class="task">
-          <div class="task-score score-high">9.2</div>
-          <div class="task-body">
-            <p class="task-title">Propuesta comercial — Laura Reyes</p>
-            <div class="task-meta"><span class="tag tag-urgent">Vence hoy</span><span>Cliente Nébula</span></div>
+      <div class="dash-columns">
+        <div class="dash-block">
+          <div class="section-head">
+            <h3>Por dónde empezar</h3>
+            <a href="#">Ver todo</a>
+          </div>
+          <div class="panel">
+            <div class="task">
+              <div class="task-score score-high">9.2</div>
+              <div class="task-body">
+                <p class="task-title">Propuesta comercial — Laura Reyes</p>
+                <div class="task-meta"><span class="tag tag-urgent">Vence hoy</span><span>Cliente Nébula</span></div>
+              </div>
+            </div>
+            <div class="task">
+              <div class="task-score score-high">8.4</div>
+              <div class="task-body">
+                <p class="task-title">Corregir checkout — bug producción</p>
+                <div class="task-meta"><span>Proyecto Tienda Sur</span></div>
+              </div>
+            </div>
+            <div class="task">
+              <div class="task-score score-mid">6.1</div>
+              <div class="task-body">
+                <p class="task-title">Preparar informe de cierre mensual</p>
+                <div class="task-meta"><span class="tag tag-blocked">Espera de otra</span></div>
+              </div>
+            </div>
+            <div class="task">
+              <div class="task-score score-low">3.8</div>
+              <div class="task-body">
+                <p class="task-title">Actualizar copy de la landing</p>
+                <div class="task-meta"><span>En 3 días</span></div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="task">
-          <div class="task-score score-high">8.4</div>
-          <div class="task-body">
-            <p class="task-title">Corregir checkout — bug producción</p>
-            <div class="task-meta"><span>Proyecto Tienda Sur</span></div>
-          </div>
-        </div>
-        <div class="task">
-          <div class="task-score score-mid">6.1</div>
-          <div class="task-body">
-            <p class="task-title">Preparar informe de cierre mensual</p>
-            <div class="task-meta"><span class="tag tag-blocked">Espera de otra</span></div>
-          </div>
-        </div>
-        <div class="task">
-          <div class="task-score score-low">3.8</div>
-          <div class="task-body">
-            <p class="task-title">Actualizar copy de la landing</p>
-            <div class="task-meta"><span>En 3 días</span></div>
-          </div>
-        </div>
-      </div>
 
-      <div class="section-head">
-        <h3>Objetivos activos</h3>
-        <a href="#">Ver todo</a>
-      </div>
-      <div class="panel">
-        <div class="list-item">Lanzar rediseño Q3 <span class="hint">62%</span></div>
-        <div class="list-item">Cerrar 5 clientes nuevos <span class="hint">3 / 5</span></div>
+        <div class="dash-block">
+          <div class="section-head">
+            <h3>Objetivos activos</h3>
+            <a href="#">Ver todo</a>
+          </div>
+          <div class="panel">
+            <div class="list-item">Lanzar rediseño Q3 <span class="hint">62%</span></div>
+            <div class="list-item">Cerrar 5 clientes nuevos <span class="hint">3 / 5</span></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -689,7 +783,7 @@
     <section class="screen" id="tab-clientes">
       <h1 class="page-title">Clientes</h1>
       <p class="page-sub">6 activos</p>
-      <div class="panel">
+      <div class="panel narrow">
         <div class="client-row">
           <div class="client-avatar">NB</div>
           <div class="client-body">
@@ -721,7 +815,7 @@
     <section class="screen" id="tab-ajustes">
       <h1 class="page-title">Ajustes</h1>
       <p class="page-sub">Cuenta y avisos</p>
-      <div class="panel">
+      <div class="panel narrow">
         <div class="list-item">Hora del resumen diario <span class="hint">9:00</span></div>
         <div class="list-item">Zona horaria <span class="hint">America/Bogota</span></div>
         <div class="list-item">Webhook Discord/Slack <span class="badge-soon">Próximamente</span></div>
