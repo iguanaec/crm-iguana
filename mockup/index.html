@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CRM Iguana — Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #ffffff;
+    --panel: #f3f3f1;
+    --card: #ffffff;
+    --line: rgba(18,18,18,0.09);
+    --line-strong: rgba(18,18,18,0.18);
+    --ink: #121212;
+    --ink-soft: #5b5f5c;
+    --ink-mute: #8a8f8c;
+    --green: #0c7a3e;
+    --green-deep: #095f30;
+    --green-soft: #e7f3ec;
+    --amber: #c17f0e;
+    --amber-soft: #fbf1de;
+    --coral: #d94f4c;
+    --coral-soft: #fbebea;
+    --azure: #3d7ebd;
+    --radius-lg: 24px;
+    --radius-md: 18px;
+    --radius-sm: 12px;
+    --font: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-top: env(safe-area-inset-top, 0px);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--panel);
+    color: var(--ink);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    background: var(--paper);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 0 60px rgba(18,18,18,0.06);
+  }
+
+  @media (min-width: 680px) {
+    body { padding: 32px 16px; }
+    .app {
+      max-width: 640px;
+      min-height: calc(100vh - 64px);
+      border-radius: 32px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .board-col { flex: 0 0 46%; }
+
+    .sheet-overlay {
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .sheet {
+      max-width: 420px;
+      border-radius: 24px;
+      transform: translateY(16px);
+      opacity: 0;
+      transition: transform .28s var(--ease, cubic-bezier(.22,1,.36,1)), opacity .28s ease;
+    }
+
+    .sheet-overlay.open .sheet { transform: translateY(0); opacity: 1; }
+  }
+
+  /* Desktop: barra lateral en vez de tabbar inferior, columnas mas anchas */
+  @media (min-width: 1024px) {
+    body { padding: 40px 24px; }
+
+    .app {
+      max-width: 1120px;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      grid-template-rows: auto 1fr;
+      grid-template-areas: "header header" "nav main";
+    }
+
+    header.topbar { grid-area: header; padding-left: 28px; padding-right: 28px; }
+
+    main {
+      grid-area: main;
+      padding: 28px 36px 40px;
+      overflow-y: visible;
+    }
+
+    nav.tabbar {
+      grid-area: nav;
+      position: static;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: 4px;
+      padding: 24px 14px;
+      border-top: none;
+      border-right: 1px solid var(--line);
+      background: var(--paper);
+      backdrop-filter: none;
+    }
+
+    .tab-btn {
+      flex-direction: row;
+      justify-content: flex-start;
+      gap: 11px;
+      padding: 11px 14px;
+      border-radius: 12px;
+      width: 100%;
+      font-size: 13px;
+    }
+
+    .tab-btn.active { background: var(--green-soft); }
+    .tab-btn svg { width: 20px; height: 20px; }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      overflow: visible;
+      margin: 0;
+      padding: 0;
+    }
+
+    .board-col { flex: none; }
+
+    .dash-columns {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .dash-columns .section-head:first-child { margin-top: 4px; }
+
+    .narrow { max-width: 480px; }
+  }
+
+  /* Header */
+  header.topbar {
+    padding: calc(16px + var(--safe-top)) 20px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--green);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .brand-name {
+    font-weight: 700;
+    font-size: 15.5px;
+    letter-spacing: -0.01em;
+  }
+
+  .brand-name span {
+    display: block;
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 10.5px;
+    color: var(--ink-mute);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--green-soft);
+    color: var(--green-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    border: 1px solid var(--line);
+  }
+
+  /* Screens */
+  main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 20px calc(96px + var(--safe-bottom));
+  }
+
+  .screen { display: none; animation: fade .25s ease both; }
+  .screen.active { display: block; }
+
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  h1.page-title {
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 4px 0 2px;
+  }
+
+  p.page-sub {
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    margin: 0 0 20px;
+  }
+
+  .mono-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--green-deep);
+  }
+
+  /* Cards */
+  .panel {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 16px;
+  }
+
+  .panel + .panel { margin-top: 12px; }
+
+  .summary-card {
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-deep) 100%);
+    color: #fff;
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .summary-card .mono-label { color: rgba(255,255,255,0.75); }
+
+  .summary-card h2 {
+    font-size: 18px;
+    margin: 6px 0 14px;
+    font-weight: 700;
+  }
+
+  .summary-stats {
+    display: flex;
+    gap: 18px;
+  }
+
+  .summary-stats div { flex: 1; }
+
+  .summary-stats .num {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .summary-stats .lbl {
+    font-size: 11px;
+    color: rgba(255,255,255,0.8);
+    margin-top: 2px;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 22px 0 10px;
+  }
+
+  .section-head h3 {
+    font-size: 14.5px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .section-head a {
+    font-size: 12.5px;
+    color: var(--green-deep);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  /* Task list */
+  .task {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .task:last-child { border-bottom: none; }
+
+  .task-score {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .score-high { background: var(--coral-soft); color: var(--coral); }
+  .score-mid { background: var(--amber-soft); color: var(--amber); }
+  .score-low { background: var(--green-soft); color: var(--green-deep); }
+
+  .task-body { flex: 1; min-width: 0; }
+
+  .task-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .task-meta {
+    font-size: 12px;
+    color: var(--ink-soft);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .tag-urgent { background: var(--coral-soft); color: var(--coral); }
+  .tag-blocked { background: var(--panel); color: var(--ink-mute); }
+
+  /* Kanban (Tablero) */
+  .board {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    margin: 0 -20px;
+    padding: 0 20px 8px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .board-col {
+    flex: 0 0 78%;
+    scroll-snap-align: start;
+    background: var(--panel);
+    border-radius: var(--radius-md);
+    padding: 12px;
+  }
+
+  .board-col h4 {
+    font-size: 12.5px;
+    font-weight: 700;
+    margin: 2px 0 10px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .board-col h4 .count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-mute);
+    background: var(--paper);
+    border-radius: 999px;
+    padding: 1px 7px;
+  }
+
+  .board-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 11px 12px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .board-card .client {
+    display: block;
+    font-weight: 500;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+
+  /* Clients */
+  .client-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .client-row:last-child { border-bottom: none; }
+
+  .client-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--panel);
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .client-body { flex: 1; min-width: 0; }
+  .client-name { font-size: 14px; font-weight: 700; margin: 0; }
+  .client-sub { font-size: 12px; color: var(--ink-soft); margin: 2px 0 0; }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+  }
+
+  /* Settings */
+  .list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 4px;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .list-item:last-child { border-bottom: none; }
+  .list-item .hint { font-size: 12px; font-weight: 500; color: var(--ink-soft); }
+
+  .badge-soon {
+    background: var(--panel);
+    color: var(--ink-mute);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+  }
+
+  /* Bottom nav */
+  nav.tabbar {
+    position: sticky;
+    bottom: 0;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--line);
+    padding: 8px 12px calc(10px + var(--safe-bottom));
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .tab-btn {
+    appearance: none;
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 4px 10px;
+    color: var(--ink-mute);
+    font-family: var(--font);
+    font-size: 10.5px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .tab-btn svg { width: 22px; height: 22px; }
+  .tab-btn.active { color: var(--green-deep); }
+  .tab-btn.active svg { stroke: var(--green-deep); }
+
+  /* FAB */
+  .fab {
+    position: absolute;
+    right: 20px;
+    bottom: calc(88px + var(--safe-bottom));
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    box-shadow: 0 10px 24px rgba(12,122,62,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 20;
+  }
+
+  .fab svg { width: 24px; height: 24px; }
+
+  /* Sheet (nueva tarea) */
+  .sheet-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(18,18,18,0.35);
+    display: none;
+    align-items: flex-end;
+    z-index: 30;
+  }
+
+  .sheet-overlay.open { display: flex; }
+
+  .sheet {
+    background: var(--paper);
+    width: 100%;
+    border-radius: 24px 24px 0 0;
+    padding: 20px 20px calc(24px + var(--safe-bottom));
+    transform: translateY(100%);
+    transition: transform .28s cubic-bezier(.22,1,.36,1);
+  }
+
+  .sheet-overlay.open .sheet { transform: translateY(0); }
+
+  .sheet-handle {
+    width: 36px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--line-strong);
+    margin: 0 auto 16px;
+  }
+
+  .sheet h3 { margin: 0 0 4px; font-size: 16px; }
+  .sheet p.hint { margin: 0 0 14px; color: var(--ink-soft); font-size: 12.5px; }
+
+  .sheet textarea {
+    width: 100%;
+    min-height: 84px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    font-family: var(--font);
+    font-size: 14px;
+    resize: none;
+    color: var(--ink);
+  }
+
+  .sheet textarea:focus { outline: 2px solid var(--green); border-color: transparent; }
+
+  .btn-primary {
+    width: 100%;
+    margin-top: 14px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 13px;
+    font-family: var(--font);
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .btn-ghost {
+    width: 100%;
+    margin-top: 8px;
+    background: none;
+    color: var(--ink-soft);
+    border: none;
+    padding: 10px;
+    font-family: var(--font);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .toast {
+    position: absolute;
+    left: 50%;
+    bottom: calc(96px + var(--safe-bottom));
+    transform: translate(-50%, 12px);
+    background: var(--ink);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: all .25s ease;
+    z-index: 40;
+    white-space: nowrap;
+  }
+
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  .mockup-flag {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    z-index: 999;
+    opacity: 0.85;
+  }
+</style>
+</head>
+<body>
+
+<div class="mockup-flag">Mockup · datos de ejemplo</div>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">CI</div>
+      <div class="brand-name">CRM Iguana<span>Hola, Ana</span></div>
+    </div>
+    <div class="avatar">A</div>
+  </header>
+
+  <main>
+
+    <!-- DASHBOARD -->
+    <section class="screen active" id="tab-dashboard">
+      <div class="summary-card">
+        <span class="mono-label">Resumen de hoy</span>
+        <h2>3 tareas piden atención primero</h2>
+        <div class="summary-stats">
+          <div><div class="num">4</div><div class="lbl">Vencen hoy</div></div>
+          <div><div class="num">2</div><div class="lbl">Bloqueadas</div></div>
+          <div><div class="num">86%</div><div class="lbl">Semana al día</div></div>
+        </div>
+      </div>
+
+      <div class="dash-columns">
+        <div class="dash-block">
+          <div class="section-head">
+            <h3>Por dónde empezar</h3>
+            <a href="#">Ver todo</a>
+          </div>
+          <div class="panel">
+            <div class="task">
+              <div class="task-score score-high">9.2</div>
+              <div class="task-body">
+                <p class="task-title">Propuesta comercial — Laura Reyes</p>
+                <div class="task-meta"><span class="tag tag-urgent">Vence hoy</span><span>Cliente Nébula</span></div>
+              </div>
+            </div>
+            <div class="task">
+              <div class="task-score score-high">8.4</div>
+              <div class="task-body">
+                <p class="task-title">Corregir checkout — bug producción</p>
+                <div class="task-meta"><span>Proyecto Tienda Sur</span></div>
+              </div>
+            </div>
+            <div class="task">
+              <div class="task-score score-mid">6.1</div>
+              <div class="task-body">
+                <p class="task-title">Preparar informe de cierre mensual</p>
+                <div class="task-meta"><span class="tag tag-blocked">Espera de otra</span></div>
+              </div>
+            </div>
+            <div class="task">
+              <div class="task-score score-low">3.8</div>
+              <div class="task-body">
+                <p class="task-title">Actualizar copy de la landing</p>
+                <div class="task-meta"><span>En 3 días</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-block">
+          <div class="section-head">
+            <h3>Objetivos activos</h3>
+            <a href="#">Ver todo</a>
+          </div>
+          <div class="panel">
+            <div class="list-item">Lanzar rediseño Q3 <span class="hint">62%</span></div>
+            <div class="list-item">Cerrar 5 clientes nuevos <span class="hint">3 / 5</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABLERO -->
+    <section class="screen" id="tab-tablero">
+      <h1 class="page-title">Tablero</h1>
+      <p class="page-sub">Proyecto: Tienda Sur — arrastra en la versión real</p>
+
+      <div class="board">
+        <div class="board-col">
+          <h4>Por hacer <span class="count">4</span></h4>
+          <div class="board-card">Definir estructura de categorías<span class="client">Tienda Sur</span></div>
+          <div class="board-card">Maquetar ficha de producto<span class="client">Tienda Sur</span></div>
+          <div class="board-card">Migrar imágenes a CDN<span class="client">Tienda Sur</span></div>
+        </div>
+        <div class="board-col">
+          <h4>En curso <span class="count">2</span></h4>
+          <div class="board-card">Integrar pasarela de pago<span class="client">Tienda Sur</span></div>
+          <div class="board-card">Corregir checkout — bug<span class="client">Tienda Sur</span></div>
+        </div>
+        <div class="board-col">
+          <h4>Revisión <span class="count">1</span></h4>
+          <div class="board-card">QA de flujo de compra móvil<span class="client">Tienda Sur</span></div>
+        </div>
+        <div class="board-col">
+          <h4>Hecho <span class="count">3</span></h4>
+          <div class="board-card">Wireframes aprobados<span class="client">Tienda Sur</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLIENTES -->
+    <section class="screen" id="tab-clientes">
+      <h1 class="page-title">Clientes</h1>
+      <p class="page-sub">6 activos</p>
+      <div class="panel narrow">
+        <div class="client-row">
+          <div class="client-avatar">NB</div>
+          <div class="client-body">
+            <p class="client-name">Cliente Nébula</p>
+            <p class="client-sub">2 proyectos activos</p>
+          </div>
+          <div class="status-dot"></div>
+        </div>
+        <div class="client-row">
+          <div class="client-avatar">TS</div>
+          <div class="client-body">
+            <p class="client-name">Tienda Sur</p>
+            <p class="client-sub">1 proyecto activo</p>
+          </div>
+          <div class="status-dot"></div>
+        </div>
+        <div class="client-row">
+          <div class="client-avatar">RV</div>
+          <div class="client-body">
+            <p class="client-name">Estudio Rivas</p>
+            <p class="client-sub">Sin proyectos abiertos</p>
+          </div>
+          <div class="status-dot" style="background:var(--ink-mute)"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AJUSTES -->
+    <section class="screen" id="tab-ajustes">
+      <h1 class="page-title">Ajustes</h1>
+      <p class="page-sub">Cuenta y avisos</p>
+      <div class="panel narrow">
+        <div class="list-item">Hora del resumen diario <span class="hint">9:00</span></div>
+        <div class="list-item">Zona horaria <span class="hint">America/Bogota</span></div>
+        <div class="list-item">Webhook Discord/Slack <span class="badge-soon">Próximamente</span></div>
+        <div class="list-item">Cerrar sesión <span class="hint">→</span></div>
+      </div>
+    </section>
+
+  </main>
+
+  <button class="fab" id="fabNew" aria-label="Nueva tarea">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+
+  <nav class="tabbar">
+    <button class="tab-btn active" data-tab="dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      Hoy
+    </button>
+    <button class="tab-btn" data-tab="tablero">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 4v16"/></svg>
+      Tablero
+    </button>
+    <button class="tab-btn" data-tab="clientes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c1-3.8 3.6-5.8 6.5-5.8s5.5 2 6.5 5.8"/><circle cx="17.5" cy="8.5" r="2.4"/><path d="M15.8 14.6c2.2.4 3.9 2.1 4.7 5.1"/></svg>
+      Clientes
+    </button>
+    <button class="tab-btn" data-tab="ajustes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2-1.5-2-3.4-2.3.9a7.7 7.7 0 0 0-1.7-1L15 3.5h-4l-.4 2.5a7.7 7.7 0 0 0-1.7 1l-2.3-.9-2 3.4L6.6 11a7.6 7.6 0 0 0 0 2l-2 1.5 2 3.4 2.3-.9c.5.4 1.1.8 1.7 1l.4 2.5h4l.4-2.5c.6-.2 1.2-.6 1.7-1l2.3.9 2-3.4-2-1.5Z"/></svg>
+      Ajustes
+    </button>
+  </nav>
+
+  <div class="sheet-overlay" id="sheetOverlay">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h3>Nueva tarea</h3>
+      <p class="hint">Descríbela como la dirías en voz alta.</p>
+      <textarea placeholder="Ej: Llamar a Laura para revisar la propuesta el martes, urgente"></textarea>
+      <button class="btn-primary" id="sheetSave">Crear tarea</button>
+      <button class="btn-ghost" id="sheetCancel">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Vista previa — sin guardar aún</div>
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab-btn');
+  const screens = document.querySelectorAll('.screen');
+
+  tabs.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      tabs.forEach((b) => b.classList.remove('active'));
+      screens.forEach((s) => s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      document.querySelector('main').scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+    });
+  });
+
+  const overlay = document.getElementById('sheetOverlay');
+  const openSheet = () => overlay.classList.add('open');
+  const closeSheet = () => overlay.classList.remove('open');
+
+  document.getElementById('fabNew').addEventListener('click', openSheet);
+  document.getElementById('sheetCancel').addEventListener('click', closeSheet);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeSheet(); });
+
+  const toast = document.getElementById('toast');
+  document.getElementById('sheetSave').addEventListener('click', () => {
+    closeSheet();
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  });
+</script>
+
+</body>
+</html>
