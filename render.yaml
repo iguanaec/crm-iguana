@@ -1,0 +1,36 @@
+# Despliegue de la API. Render lee este archivo y crea el servicio ya
+# configurado; las variables marcadas como sync:false se completan a mano
+# porque dependen de Supabase y de la dirección del frontend.
+#
+# La base de datos NO se crea aquí: vive en Supabase.
+services:
+  - type: web
+    name: crm-iguana-api
+    runtime: node
+    plan: free
+    # El repositorio es un monorepo, así que se instala desde la raíz.
+    buildCommand: npm install && npm run build --workspace=@crm/backend
+    startCommand: npm start --workspace=@crm/backend
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # Supabase → Project Settings → Database → Connection string.
+      # DATABASE_URL es la del pooler (puerto 6543, con ?pgbouncer=true).
+      # DIRECT_URL es la directa (puerto 5432), que usan las migraciones.
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+
+      # La dirección del sitio en Cloudflare Pages, p. ej.
+      # https://crm-iguana.pages.dev
+      - key: CORS_ORIGIN
+        sync: false
+
+      # Render los genera solos: no hay que inventarlos ni guardarlos aquí.
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CRON_SECRET
+        generateValue: true

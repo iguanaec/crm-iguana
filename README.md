@@ -69,49 +69,66 @@ npm run dev
 
 ## Desplegar
 
-Son dos piezas: la API (Node + PostgreSQL) y la interfaz (archivos estáticos).
+Tres piezas, todas con plan gratuito: la base en **Supabase**, la API en
+**Render** y la interfaz en **Cloudflare Pages**.
 
-### API
+### 1. Base de datos en Supabase
 
-| Variable | Valor |
+Crea un proyecto y copia las dos direcciones de Project Settings → Database →
+Connection string. Son distintas y ambas hacen falta:
+
+| Variable | Cuál copiar | Para qué |
+| --- | --- | --- |
+| `DATABASE_URL` | La del pooler, puerto **6543**, añadiendo `?pgbouncer=true&connection_limit=1` | Las consultas de la app |
+| `DIRECT_URL` | La directa, puerto **5432** | Las migraciones |
+
+El pooler no admite las sentencias preparadas que usan las migraciones, por eso
+van por la conexión directa. Con una sola de las dos, el despliegue falla.
+
+### 2. API en Render
+
+El repositorio trae `render.yaml`: en Render elige *New → Blueprint*, apunta al
+repositorio y el servicio queda configurado. Solo hay que rellenar a mano
+`DATABASE_URL`, `DIRECT_URL` y `CORS_ORIGIN` (la dirección del sitio, que sale
+del paso 3). `JWT_SECRET` y `CRON_SECRET` los genera Render.
+
+Las migraciones se aplican solas en cada arranque.
+
+### 3. Interfaz en Cloudflare Pages
+
+En *Workers & Pages → Create → Pages*, conecta el repositorio y configura:
+
+| Campo | Valor |
 | --- | --- |
-| `DATABASE_URL` | La que da el PostgreSQL del proveedor |
-| `JWT_SECRET` | Uno propio: `openssl rand -base64 32` |
-| `CORS_ORIGIN` | La dirección de la interfaz, p. ej. `https://mi-crm.up.railway.app` |
-| `NODE_ENV` | `production` |
+| Build command | `npm install && npm run build --workspace=@crm/frontend` |
+| Build output directory | `apps/frontend/dist` |
+| Variable de entorno | `VITE_API_URL` = `https://tu-api.onrender.com/api/v1` |
 
-Comandos: `npm run build --workspace=@crm/backend` y luego
-`npm start --workspace=@crm/backend`.
+`VITE_API_URL` se incrusta al construir, así que cambiarla obliga a volver a
+desplegar. El archivo `apps/frontend/public/_redirects` ya está incluido: sin él
+recargar en `/proyectos` daría 404, porque el enrutado lo resuelve el navegador.
 
-El arranque aplica las migraciones pendientes antes de escuchar, así que un
-despliegue nuevo deja la base al día por sí solo.
+Cuando tengas la dirección del sitio, ponla en `CORS_ORIGIN` en Render.
 
-El servidor ejecuta TypeScript con `tsx` en vez de compilar a JavaScript. Es
-deliberado: los paquetes compartidos se consumen como fuente, y compilarlos
-obligaría a orquestar varias salidas para no ganar nada a esta escala. Por eso
-`tsx` y el CLI de Prisma están en `dependencies` y no en `devDependencies`.
+### 4. Avisos con hosting gratuito
 
-Si `CORS_ORIGIN` queda sin definir, la API acepta peticiones de cualquier
-origen y lo avisa por consola al arrancar.
+El plan gratuito de Render suspende el servicio tras unos minutos sin tráfico, y
+con él los temporizadores internos: el resumen de la mañana no llegaría solo.
 
-### Interfaz
+Para que funcionen, programa una llamada externa gratuita (por ejemplo en
+cron-job.org) cada hora:
 
-Construir con `VITE_API_URL` apuntando a la API (incluido `/api/v1`):
-
-```bash
-VITE_API_URL="https://mi-api.up.railway.app/api/v1" npm run build --workspace=@crm/frontend
+```
+POST https://tu-api.onrender.com/api/v1/cron/run
+Authorization: Bearer <CRON_SECRET>
 ```
 
-El resultado queda en `apps/frontend/dist`: son archivos estáticos, los sirve
-cualquier hosting. La variable se incrusta al construir, así que cambiarla
-después obliga a reconstruir.
+Esa llamada despierta el servicio y dispara las revisiones. La ruta no usa
+sesión porque quien llama es una máquina, y sin `CRON_SECRET` configurado
+sencillamente no existe.
 
-### Sobre el costo
-
-El código no depende de ningún servicio de pago, pero el hosting sí puede
-cobrar. Railway cobra por uso pasado el crédito inicial. Alternativas sin costo
-para este stack: la interfaz en Cloudflare Pages o Netlify, y la base en
-Supabase o Neon, que dan PostgreSQL gratis.
+Ten en cuenta que el primer acceso tras un rato de inactividad tarda unos
+segundos mientras el servicio arranca. Es el costo de no pagar hosting.
 
 ## Estructura
 

@@ -4,7 +4,11 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  // Conexión de la aplicación. En Supabase es la del pooler (puerto 6543).
+  url       = env("DATABASE_URL")
+  // Conexión directa (puerto 5432). El pooler no admite las sentencias que usan
+  // las migraciones, así que estas van por aquí. En local ambas son la misma.
+  directUrl = env("DIRECT_URL")
 }
 
 enum TaskStatus {

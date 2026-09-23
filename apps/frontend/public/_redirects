@@ -1,0 +1,4 @@
+# El enrutado lo resuelve React en el navegador, así que el servidor no conoce
+# /proyectos ni /ajustes: sin esta regla, recargar en cualquier ruta da 404.
+# Se entrega index.html con estado 200 y la app decide qué mostrar.
+/*    /index.html   200

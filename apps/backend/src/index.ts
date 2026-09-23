@@ -12,6 +12,7 @@ import { objectivesRouter } from './objectives/objectives.routes.js';
 import { aiRouter } from './ai/ai.routes.js';
 import { notificationsRouter } from './notifications/notifications.routes.js';
 import { integrationsRouter } from './integrations/integrations.routes.js';
+import { cronRouter } from './notifications/cron.routes.js';
 import { startScheduler } from './scheduler.js';
 
 const app = express();
@@ -41,6 +42,7 @@ app.get('/health', (_req, res) => {
 
 const api = express.Router();
 api.use('/auth', authRouter);
+api.use('/cron', cronRouter);
 
 // Todo lo que sigue exige sesion: se aplica una vez, no ruta por ruta.
 api.use(requireAuth);
