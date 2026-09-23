@@ -14,6 +14,8 @@ const schema = z.object({
   JWT_SECRET: z.string().min(16, 'JWT_SECRET debe tener al menos 16 caracteres'),
   JWT_EXPIRES_IN: z.string().default('7d'),
   DEFAULT_TIMEZONE: z.string().default('America/Bogota'),
+  /** Origen del frontend, separado por comas. Vacío deja pasar cualquiera (solo local). */
+  CORS_ORIGIN: z.string().optional(),
 });
 
 const parsed = schema.safeParse(process.env);

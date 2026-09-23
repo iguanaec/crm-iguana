@@ -16,7 +16,23 @@ import { startScheduler } from './scheduler.js';
 
 const app = express();
 
-app.use(cors());
+/**
+ * Sin CORS_ORIGIN se acepta cualquier origen, que es lo cómodo en local. Al
+ * desplegar hay que fijarlo a la dirección del frontend: la API entrega datos
+ * de clientes y el token viaja en cada petición.
+ */
+const allowedOrigins = env.CORS_ORIGIN?.split(',').map((origin) => origin.trim()).filter(Boolean);
+
+if (allowedOrigins?.length) {
+  app.use(cors({ origin: allowedOrigins }));
+  console.log(`CORS restringido a: ${allowedOrigins.join(', ')}`);
+} else {
+  app.use(cors());
+  if (env.NODE_ENV === 'production') {
+    console.warn('CORS_ORIGIN sin definir: la API acepta peticiones de cualquier origen.');
+  }
+}
+
 app.use(express.json({ limit: '1mb' }));
 
 app.get('/health', (_req, res) => {

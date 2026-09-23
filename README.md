@@ -67,6 +67,52 @@ npm run dev
 | `npm run db:migrate` | Aplica migraciones pendientes |
 | `npm run db:studio` | Explorador visual de la base de datos |
 
+## Desplegar
+
+Son dos piezas: la API (Node + PostgreSQL) y la interfaz (archivos estáticos).
+
+### API
+
+| Variable | Valor |
+| --- | --- |
+| `DATABASE_URL` | La que da el PostgreSQL del proveedor |
+| `JWT_SECRET` | Uno propio: `openssl rand -base64 32` |
+| `CORS_ORIGIN` | La dirección de la interfaz, p. ej. `https://mi-crm.up.railway.app` |
+| `NODE_ENV` | `production` |
+
+Comandos: `npm run build --workspace=@crm/backend` y luego
+`npm start --workspace=@crm/backend`.
+
+El arranque aplica las migraciones pendientes antes de escuchar, así que un
+despliegue nuevo deja la base al día por sí solo.
+
+El servidor ejecuta TypeScript con `tsx` en vez de compilar a JavaScript. Es
+deliberado: los paquetes compartidos se consumen como fuente, y compilarlos
+obligaría a orquestar varias salidas para no ganar nada a esta escala. Por eso
+`tsx` y el CLI de Prisma están en `dependencies` y no en `devDependencies`.
+
+Si `CORS_ORIGIN` queda sin definir, la API acepta peticiones de cualquier
+origen y lo avisa por consola al arrancar.
+
+### Interfaz
+
+Construir con `VITE_API_URL` apuntando a la API (incluido `/api/v1`):
+
+```bash
+VITE_API_URL="https://mi-api.up.railway.app/api/v1" npm run build --workspace=@crm/frontend
+```
+
+El resultado queda en `apps/frontend/dist`: son archivos estáticos, los sirve
+cualquier hosting. La variable se incrusta al construir, así que cambiarla
+después obliga a reconstruir.
+
+### Sobre el costo
+
+El código no depende de ningún servicio de pago, pero el hosting sí puede
+cobrar. Railway cobra por uso pasado el crédito inicial. Alternativas sin costo
+para este stack: la interfaz en Cloudflare Pages o Netlify, y la base en
+Supabase o Neon, que dan PostgreSQL gratis.
+
 ## Estructura
 
 ```

@@ -1,5 +1,12 @@
 const TOKEN_KEY = 'crm-iguana-token';
 
+/**
+ * En desarrollo basta la ruta relativa: el proxy de Vite la reenvía al backend.
+ * Desplegados por separado no hay proxy, así que la dirección de la API llega
+ * por VITE_API_URL al construir.
+ */
+const API_BASE = import.meta.env.VITE_API_URL ?? '/api/v1';
+
 export function getToken(): string | null {
   try {
     return localStorage.getItem(TOKEN_KEY);
@@ -38,7 +45,7 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
   if (init.body) headers.set('Content-Type', 'application/json');
   if (token) headers.set('Authorization', `Bearer ${token}`);
 
-  const response = await fetch(`/api/v1${path}`, { ...init, headers });
+  const response = await fetch(`${API_BASE}${path}`, { ...init, headers });
 
   if (response.status === 401) {
     setToken(null);
